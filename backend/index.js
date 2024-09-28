@@ -9,9 +9,12 @@ app.use(cors());
 app.use(express.json());
 
 
-app.get("/", (req,res)=>{
-    res.send(`Hello From EECR`);
-});
+const orderRouter = require("./routes/RepairRequest");
+const employeeRouter = require("./routes/Employees");
+const paymentRouter = require("./routes/Money");
+app.use("/veh", orderRouter);
+app.use("/employee", employeeRouter);
+app.use("/money", paymentRouter);
 
 app.use("*", (req,res)=> res.status(404).json("No content at this path"))
 
