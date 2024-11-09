@@ -1,0 +1,52 @@
+.container-main{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 98%;
+}
+.card{
+    flex: 1 1 14%; /* يجعل العرض مرنًا */
+    max-width: 300px; /* تحديد عرض أقصى للبطاقة */
+    height: 160px;
+    margin: 10px; /* إضافة مسافة بين البطاقات */
+    background-color: #ececec;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.container-title-desc{
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    height: 50%;
+}
+.title-card{
+    font-weight: bold;
+}
+.container-btn{
+    height: 25%;
+}
+.btn-card{
+    border: 0;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: aqua;
+    cursor: pointer;
+
+}
+.btn-card:active{
+    background-color: rgb(0, 190, 190);
+    
+}
+.container-image{
+    height: 25%;
+}
+
+.img{
+    width: 16%; /* Make the image take full width of its container */
+    height: auto;
+    object-fit:cover;
+}

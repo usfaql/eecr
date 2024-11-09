@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مهند اسماعيل with Password Protection</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 100%;
+            background-color: #2c2c2c;
+            color: #e6e6e6;
+        }
+        h1 {
+            color: #80E27E;
+            font-size: 2.5em;
+            text-align: center;
+        }
+        label {
+            margin-top: 10px;
+            display: block;
+            font-size: 1.2em;
+            color: #ffffff;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            font-size: 1.2em;
+            padding: 10px;
+            background-color: #3a3a3a;
+            color: #ffffff;
+            border: 2px solid #80E27E;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            display: block;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #loading {
+            display: none;
+            color: #80E27E;
+            font-size: 16px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        #outputTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #2c2c2c;
+        }
+        #outputTable td:nth-child(2) {
+            background-color: #e7e5d0;
+            color: #000;
+            text-align: center;
+            padding: 10px;
+        }
+        #outputTable th, #outputTable td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            color: #e6e6e6;
+        }
+        #outputTable th {
+            background-color: #a40d0d;
+        }
+        .sent {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #nextLinkButton {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            font-size: 1.2em;
+            border-radius: 5px;
+        }
+        #nextLinkButton:hover {
+            background-color: #0056b3;
+        }
+        #loginScreen {
+            display: block;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #loginScreen input {
+            padding: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 1.2em;
+            background-color: #3a3a3a;
+            color: white;
+            border: 2px solid #80E27E;
+        }
+        #loginScreen button {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 5px;
+        }
+        #loginScreen button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 600px) {
+            body {
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+            textarea {
+                height: 80px;
+            }
+            button {
+                font-size: 1.2em;
+                padding: 10px;
+            }
+            #nextLinkButton {
+                font-size: 1.2em;
+                padding: 10px;
+            }
+            #outputTable td, #outputTable th {
+                padding: 8px;
+                font-size: 1.0em;
+            }
+        }
+        #clearStorageButton {
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1.2em;
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+        }
+        #clearStorageButton:hover {
+            background-color: #d32f2f;
+        }
+        .countMessage {
+    margin-top: 20px;
+    font-size: 1.5em;
+    text-align: center;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.countMessage:hover {
+    background-color: #45a049;
+}
+
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <h2>Please Enter Password</h2>
+        <input type="password" id="password" placeholder="Enter Password" />
+        <button onclick="checkPassword()">Login</button>
+        <p id="error" style="color: red; display: none;">Incorrect password. Please try again.</p>
+    </div>
+
+    <div id="mainContent" style="display: none;">
+        <h1>مهند اسماعيل</h1>
+        <div class="language-buttons">
+            <img src="https://flagcdn.com/w320/ae.png" class="language-button" onclick="resetToDefaultLanguage()" alt="عربي" title="عودة إلى اللغة الأصلية" style="width: 50px; height: 30px; margin-right: 10px; display: inline-block;">
+            <img src="https://flagcdn.com/w320/us.png" class="language-button" onclick="changeLanguage('en')" alt="English" style="width: 50px; height: 30px; margin-right: 10px; display: inline-block;">
+            <img src="https://flagcdn.com/w320/fr.png" class="language-button" onclick="changeLanguage('fr')" alt="Français" style="width: 50px; height: 30px; margin-right: 10px; display: inline-block;">
+            <img src="https://flagcdn.com/w320/ir.png" class="language-button" onclick="changeLanguage('fa')" alt="فارسی" style="width: 50px; height: 30px; display: inline-block;">
+        </div>
+        <script>
+            let language = 'ar'; 
+            const texts = {
+                ar: {
+                    mainTitle: "مهند اسماعيل",
+                    enterPassword: "يرجى إدخال كلمة المرور",
+                    submitButton: "إرسال",
+                    clearButton: "مسح",
+                    totalCount: "مجموع الأرقام المدخلة: {count}، الرسائل مرسلة: {sent}",
+                    clearStorageButton: "عند اختفاء زر ازرق اضغط هنا لبدء ارقام جديدة",
+                    regionSelect: "اختر المنطقة:",
+                    regionOptions: {
+                        A: "---",
+                        Algeria: "الجزائر",
+                        Morocco: "المغرب",
+                        Tunisia: "تونس",
+                        Libya: "ليبيا",
+                        gulf: "دول الخليج",
+                        sham: "دول الشام",
+                        maghreb: "المغرب العربي",  
+                        Egypt: "مصر",                      
+                        Iran: "ايران",
+                        India: "الهند",
+                        France: "الدول الفرنسية",
+                        English: "الدول الانجليزية",
+                        Spanish: "الدول الاسبانية"
+
+                    },
+                    messageLabel: "ادخل رسالة:",
+                    numbersLabel: "ادخل الارقام بشكل عمودي",
+                    nextStepButton: "أرسل رسالة",
+                    whatsappLinks: "روابط الواتس اب:"
+                },
+                en: {
+                    mainTitle: "Mohannad Ismail",
+                    enterPassword: "Please enter the password",
+                    submitButton: "Submit",
+                    clearButton: "Clear",
+                    totalCount: "Total numbers entered: {count}, messages sent: {sent}",
+                    clearStorageButton: "Click here to start new numbers when the blue button disappears",
+                    regionSelect: "Select Region:",
+                    regionOptions: {
+                        A: "---",
+                        Algeria: "Algeria",
+                        Morocco: "Morocco",
+                        Tunisia: "Tunisia",
+                        Libya: "Libya",
+                        gulf: "Gulf Countries",
+                        sham: "Levant Countries",
+                        maghreb: "Maghreb",
+                        Egypt: "Egypt",
+                        Iran: "Iran",
+                        India: "India",
+                        France: "Pays français",
+                        English: "Pays anglais",
+                        Spanish: "Pays espagnols"
+
+                    },
+                    messageLabel: "Enter Message:",
+                    numbersLabel: "Enter Numbers Vertically",
+                    nextStepButton: "Next Step",
+                    whatsappLinks: "WhatsApp Links:"
+                },
+                fr: {
+                    mainTitle: "Mohannad Ismail",
+                    enterPassword: "Veuillez entrer le mot de passe",
+                    submitButton: "Soumettre",
+                    clearButton: "Effacer",
+                    totalCount: "Total des numéros saisis: {count}, messages envoyés: {sent}",
+                    clearStorageButton: "Cliquez ici pour commencer de nouveaux numéros lorsque le bouton bleu disparaît",
+                    regionSelect: "Choisir la région:",
+                    regionOptions: {
+                        A: "---",
+                        Algeria: "Algérie",
+                        Morocco: "Maroc",
+                        Tunisia: "Tunisie",
+                        Libya: "Libye",
+                        gulf: "Pays du Golfe",
+                        sham: "Pays du Levant",
+                        maghreb: "Maghreb",
+                        Egypt: "Égypte",
+                        Iran: "Iran",
+                        India: "Inde",
+                        France: "Europe France",
+                        English: "Europe Anglais",
+                        Spanish: "Amérique",
+
+                    },
+
+                    messageLabel: "Entrez le message:",
+                    numbersLabel: "Entrez les numéros verticalement",
+                    nextStepButton: "Envoyer message",
+                    whatsappLinks: "Liens WhatsApp:"
+                },
+                fa: {
+                    mainTitle: "مهند اسماعیل",
+                    enterPassword: "لطفا رمز عبور را وارد کنید",
+                    submitButton: "ارسال",
+                    clearButton: "پاک کردن",
+                    totalCount: "مجموع اعداد وارد شده: {count}، پیام های ارسال شده: {sent}",
+                    clearStorageButton: "هنگامی که دکمه آبی ناپدید شد، برای شروع اعداد جدید اینجا کلیک کنید",
+                    regionSelect: "منطقه را انتخاب کنید:",
+                    regionOptions: {
+                        A: "---",
+                        Algeria: "الجزایر",
+                        Morocco: "مراکش",
+                        Tunisia: "تونس",
+                        Libya: "لیبی",
+                        gulf: "کشورهای خلیج فارس",
+                        sham: "کشورهای شام",
+                        maghreb: "کشور مغرب عربی",
+                        Egypt: "مصر",
+                        Iran: "ايران",
+                        India: "الهند",
+                        France: "أوروبا فرانسه",
+                        English: "أوروبا انگلیسی",
+                        Spanish: "امریکا"
+                    },
+                    messageLabel: "پیام را وارد کنید:",
+                    numbersLabel: "شماره ها را به صورت عمودی وارد کنید",
+                    nextStepButton: "ارسال پیام",
+                    whatsappLinks: "لینک های واتس اپ:"
+                }
+            };
+        
+            function changeLanguage(lang) {
+                language = lang; 
+                updateTexts(); 
+                updateCountMessage(); 
+            }
+        
+            function resetToDefaultLanguage() {
+                language = 'ar';
+                updateTexts();
+            }
+        
+            function updateTexts() {
+                document.querySelector('h1').innerText = texts[language].mainTitle;
+                document.getElementById('loginScreen').querySelector('h2').innerText = texts[language].enterPassword;
+        
+                
+                const clearStorageButton = document.getElementById('clearStorageButton');
+                const nextLinkButton = document.getElementById('nextLinkButton');
+                const loadingElement = document.getElementById('loading');
+                const whatsappLinksHeading = document.getElementById('whatsappLinksHeading');
+                const regionSelect = document.getElementById('regionSelect');
+        
+                if (clearStorageButton) {
+                    clearStorageButton.innerText = texts[language].clearStorageButton;
+                }
+                if (nextLinkButton) {
+                    nextLinkButton.innerText = texts[language].nextStepButton;
+                }
+                if (loadingElement) {
+                    loadingElement.innerText = texts[language].loading || "Processing... Please wait";
+                }
+                if (whatsappLinksHeading) {
+                    whatsappLinksHeading.innerText = texts[language].whatsappLinks;
+                }
+        
+                
+                document.querySelector('label[for="regionSelect"]').innerText = texts[language].regionSelect;
+                document.querySelector('label[for="message"]').innerText = texts[language].messageLabel;
+                document.querySelector('label[for="numbers"]').innerText = texts[language].numbersLabel;
+        
+                
+                if (regionSelect) {
+    regionSelect.options[0].text = texts[language].regionOptions.A;                
+    regionSelect.options[1].text = texts[language].regionOptions.Algeria;                
+    regionSelect.options[2].text = texts[language].regionOptions.Morocco;
+    regionSelect.options[3].text = texts[language].regionOptions.Tunisia;
+    regionSelect.options[4].text = texts[language].regionOptions.Libya;
+    regionSelect.options[5].text = texts[language].regionOptions.gulf;
+    regionSelect.options[4].text = texts[language].regionOptions.sham;
+    regionSelect.options[5].text = texts[language].regionOptions.maghreb;
+    regionSelect.options[6].text = texts[language].regionOptions.Egypt; 
+
+    regionSelect.options[7].text = texts[language].regionOptions.Iran;  
+    regionSelect.options[8].text = texts[language].regionOptions.India; 
+    regionSelect.options[9].text = texts[language].regionOptions.France; 
+    regionSelect.options[10].text = texts[language].regionOptions.English; 
+    regionSelect.options[11].text = texts[language].regionOptions.Spanish; 
+}
+
+            }
+        
+            function updateCountMessage() {
+                const countMessage = document.getElementById('countMessage');
+                if (countMessage) {
+                    countMessage.textContent = texts[language].totalCount.replace('{count}', links.length).replace('{sent}', sentCount);
+                }
+            }
+        </script>
+
+
+<button id="clearStorageButton" onclick="confirmClearStorage()">عند اختفاء زر ازرق اضغط هنا لبدء ارقام جديدة اختر المنطقة:</button>
+
+        
+        <label for="regionSelect" id="regionLabel">اختر المنطقة:</label>
+        <select id="regionSelect" onchange="updateGreetingsAndNames()">
+            <option value="A">---</option>  
+            <option value="Algeria">الجزائر</option>
+            <option value="Morocco">المغرب</option>
+            <option value="Tunisia">تونس</option>
+            <option value="Libya">ليبيا</option>
+            <option value="gulf">دول الخليج</option>
+            <option value="sham">دول الشام</option>
+            <option value="maghreb">المغرب العربي</option>
+            <option value="Egypt">مصر</option>
+            <option value="Iran">ايران</option>
+            <option value="India">الهند</option>
+            <option value="France">الدول الفرنسية</option>
+            <option value="English">الدول الانجليزية</option>
+            <option value="Spanish">الدول الاسبانية</option>
+        </select>
+        
+        <label for="message" id="messageLabel">: ادخل رسالة</label>
+        <textarea id="message" placeholder="............ادخل رسالة واربط فيديو" oninput="saveData()"></textarea>
+
+        <label for="numbers" id="numbersLabel">ادخل الارقام بشكل عمودي</label>
+        <textarea id="numbers" placeholder="لصق أرقام من واتساب هنا" oninput="saveData()" style="resize: both; overflow: auto;" rows="20" cols="100"></textarea>
+        <input type="file" id="fileInput" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+      
+
+        <button onclick="generateWhatsAppLinks()">خطوة الاولى</button>
+
+        <div id="countMessage" class="countMessage">مجموع الأرقام المدخلة: 0, الرسائل مرسلة: 0</div>
+       
+
+        <button id="nextLinkButton" onclick="goToNextLink()" style="display: none;">أرسل رسالة</button>
+
+        <div id="loading">Processing... Please wait</div>
+
+        <h3>روابط الواتس اب:</h3>
+        <table id="outputTable">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>WhatsApp Link</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="outputTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+	
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function() {
+            const file = this.files[0];
+            const errorDiv = document.getElementById('error');
+            const numbersTextarea = document.getElementById('numbers');
+
+            errorDiv.textContent = '';
+            numbersTextarea.value = '';
+
+            if (!file) {
+                errorDiv.textContent = 'يرجى اختيار ملف.';
+                return;
+            }
+
+            // تحقق من نوع الملف
+            if (file.type !== 'text/csv' &&
+                file.type !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' &&
+                file.type !== 'application/vnd.ms-excel') {
+                errorDiv.textContent = 'صيغة الملف غير صحيحة. يرجى تحميل ملف CSV أو Excel.';
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                // افترض أن البيانات في أول ورقة عمل
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                // تحويل محتوى ورقة العمل إلى مصفوفة
+                const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+                
+                // عرض كل محتوى الملف في مربع النص
+                const content = json.map(row => row.join('\t')).join('\n'); // استخدام \t للفصل بين الأعمدة
+                numbersTextarea.value = content || 'لا توجد بيانات في الملف.';
+            };
+
+            reader.readAsArrayBuffer(file); // استخدم readAsArrayBuffer لملفات Excel
+        });
+    </script>
+    
+	<script>
+        const correctPassword = "1";
+
+        function checkPassword() {
+            const enteredPassword = document.getElementById('password').value;
+            if (enteredPassword === correctPassword) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadPreviousData();
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        let links = [];
+        let currentLinkIndex = 0;
+        let sentLinks = [];
+        let sentCount = 0;
+       
+
+        const videoLinks = [   
+        "https://youtu.be/_iTpi8AWNTU?si=sbsh0V5tUvNM70gn",
+        "https://youtu.be/_iTpi8AWNTU?si=kkhbMwNqUY7WeWWp",  
+        "https://youtu.be/_iTpi8AWNTU?si=Kysfai3cc294z53I"
+
+    ];
+        let greetings = [];
+        let names = [];
+
+        const regionData = {
+            A: {
+                greetings: [" "],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"],           
+            },
+            Algeria: {
+                greetings: ["سلام", " ", "واش راك", " ", "واش حوالك", " ", "لاباس", " ", "نهارك زين"],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"],           
+            },
+            Morocco: {
+                greetings: ["كيديرة", " ","كلشي بخير", "سلام", " ","أهلا", " ","كيف ركي؟"],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"]
+            },
+            Tunisia: {
+                greetings: ["عسلامة", " ", "شنية حوالك", " ", "لباس عليك", " ", "كيفاشك", " ", "شنية أمورك", " ", "لا باس"],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"]
+            },
+            Libya: {
+                greetings: ["هلا", " ", "هلا بيك", " ", "شن حالك", " ", "شن حالك", " ", "اخبارك شنو", " ", "عساك بخير", " ", "نهارك طيب"],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"]
+            },
+            gulf: {
+                greetings: ["هلا", " ","علومج", " ","اخبارج", "شحالج"],
+                names: ["فاطمة", "عائشة", "مريم", "ليلى", "نورة", "سارة", "ريم", "هالة", "جواهر", "دانة", "حصة", "جود", "أسيل", "نوف", "غادة", "أمل", "سعاد", "زينب", "شذى", "بشرى", "ليان", "هيا", "عبير", "ميساء", "رند", "غيداء", "عفاف", "رقية", "مروة", "منى", "آمنة", "دلال", "لطيفة", "زهراء", "نسيمة", "نورا", "عهود", "ريتا", "نجلاء", "ميسم", "سلافة", "وفاء", "زينة", "دعاء", "شوق", "مرام", "عنود", "ربا", "جميلة", "رنا", "حنين", "كريمة", "بيسان", "سوسن", "أريج", "ريما", "جمانة", "سلوى", "تقى", "نائلة", "عفراء", "ساجدة", "أماني", "رهف", "عزة", "رندة", "جنى", "شمس", "عتاب", "صفاء", "حلا", "سنا", "مديحة", "سميرة", "يسرا", "نهى", "أريام", "قمر", "وئام", "نسمه", "روان", "حسناء", "شهد", "كنزة", "عواطف", "بسمه", "أسمى", "ليلي", "بتول", "خولة", "ليال", "كنانة", "تالا", "نداء", "فرح", "غزل", "سما", "توجان", "زهرة", "سحر", "نعيمة", "ياسمين", "نغمة", "ميار", "هاجر", "جولي", "شروق", "لميس", "سلا", "سكينة", "سبيكة", "نواف", "نادين", "رانيا", "جهاد", "سجى", "مسك", "تسنيم", "دينا", "مودة", "رفيعة", "صبا", "حنان", "سهى", "كندة", "طيف", "ماجدة", "نغم", "هلا", "لولوة", "عالية", "أنوار", "آية", "نجاة", "أسما", "طيبة", "شريفة", "يارا", "إيمان", "براء", "سها", "غنيمة", "راية", "نشوة", "صفا", "رشا", "سوزان", "شادن", "فريدة", "ختام", "لينا", "جيهان", "ريام", "ندا", "أمينة", "فوزية", "غدير", "فريال", "تيا", "أسماء", "نوال", "سمر", "كاميليا", "أروى", "كيندا", "أميرة", "شموخ", "رزان", "نبيلة", "ليالي", "شيماء", "كيان", "رقيه", "غرام", "نسرين", "رنيم", "كرافت", "حسنية", "حمدية", "ريانة", "مروى", "سامية", "ناهد", "رواد", "عزيزة", "براءة", "نور", "بسمة", "سيدة", "آيات", "ميان", "ريناد", "منيرة", "عزه", "لمى", "رواب", "سمية", "لمياء", "نجوى", "جودي", "سناء", "نرجس", "رافدة", "سارا", "رباب", "ريمة", "لينة", "ضحى", "سيلين", "مهدية", "يسرى", "رندا", "رحيق", "نجود", "نانسي", "ريان", "ربيع", "فلوة", "سلمي", "شرف", "هبة", "رانية", "كاتيا", "ميرا", "سجا", "عايدة", "لانا", "كفاح", "رانا", "سعادة", "ميمونة", "ربيعة", "ولاء", "ندى", "مريهان", "غنوة", "وداد", "فخرية", "علوية", "نسمة", "عزيز", "تيماء", "روابي", "نادية", "سهر", "نسيم", "عفيفة", "وردة", "عائدة"]
+            },
+            sham: {
+                greetings: ["هلا", "كيفك", "شو اخبارك", "قلبي"],
+                names: ["فاطمة", "مريم", "ليلى", "سارة", "ريم", "هالة", "نورة", "شذى", "عائشة", "ميساء", "غادة", "رند", "نوف", "هيا", "زينب", "جميلة", "سوسن", "أريج", "نجلاء", "جود", "أسيل", "سعاد", "رنا", "شوق", "عبير", "دعاء", "غيداء", "رقية", "مروة", "زهراء", "آمنة", "لطيفة", "عفاف", "مرام", "عزة", "جمانة", "وفاء", "نجوى", "تسنيم", "دلال", "زينة", "لمياء", "سلافة", "تقى", "كندة", "غزل", "هبة", "فدوى", "ياسمين", "صفاء", "سحر", "ليان", "شيرين", "جليلة", "رفيف", "حنين", "جودي", "آية", "مهدية", "لارا", "سها", "عفيفة", "ميان", "عذراء", "لمى", "جيهان", "فريدة", "سمر", "نبيلة", "كاميليا", "رحاب", "فوزية", "مروى", "غنوة", "ليال", "ناهد", "رندة", "شموخ", "سجا", "ميسون", "كريمة", "حلا", "سنا", "تاليا", "جهاد", "بشاير", "سيلين", "صبا", "وئام", "نغم", "جنة", "عوديسا", "رنيم", "شادية", "نرجس", "سجى", "منى", "ريتا", "غدير", "تيماء", "نادين", "رولا", "حمدية", "وداد", "عذبة", "سلمى", "أروى", "خولة", "عاتكة", "ندى", "نوار", "ضحى", "سمية", "وردة", "نورا", "حنان", "نوال", "نهاد", "عنود", "صافية", "رقيه", "عيدة", "عايدة", "أماني", "بديعة", "سهر", "رائدة", "لميس", "سناء", "شيماء", "براءة", "سميرة", "ميسم", "شريفة", "إيمان", "فريال", "نعيمة", "حوراء", "حليمة", "غنيمة", "سوزان", "عزيز", "نادية", "رندا", "حور", "ليالي", "نشوة", "نهى", "نجاة", "يارا", "فائزة", "عفراء", "فخرية", "زهور", "ساجدة", "سحرية", "بيسان", "غرام", "رزان", "بشائر", "لياء", "حسناء", "جواهر", "بتول", "نسرين", "شذا", "تالا", "ضياء", "تيسير", "لبنى", "رواد", "ديمة", "راوية", "نادرة", "رماح", "حورية", "نجود", "أميرة", "لورا", "ريا", "راجية", "أمينة", "رامة", "بيداء", "طيف", "شمس", "نور", "مروج", "مريهان", "ترف", "عزيزة", "فايزة", "طيبة", "دينا", "سامية", "تانيا", "سهي", "كواكب", "صوفيا", "جيلان", "أنوار", "هاجر", "هناء", "أمل", "ولاء", "سيرة", "سميحة", "جنى", "شادن", "جني", "فادية", "روابي", "سيدة", "كنانة", "خديجة", "ريما", "رافدة", "تيا", "لولوة", "قمر", "عواطف", "سيفاء", "حسنية", "يسرا"]
+            },
+            maghreb: {
+                greetings: ["كيديرة", " ","كلشي بخير", "سلام", " ","أهلا", " ","كيف ركي؟"],
+                names: ["أمينة", "سارة", "ليلى", "ياسمينة", "فاطمة", "ليلى", "نور", "سميرة", "نادية", "إيمان", "كنزة", "سلمى", "زينب", "مريم", "نعيمة", "نورا", "هبة", "أسماء", "نوال", "هدى", "رانيا", "مها", "سلمى", "عائشة", "سهى", "سعاد", "لبنى", "حنان", "غادة", "دنيا", "ليليا", "مانيل", "ملك", "نوريا", "ريم", "أميمة", "وفاء", "ابتسام", "آية", "تسنيم", "ليلى", "خديجة", "شادية", "سمية", "مريم", "ياسمين", "كريمة", "فتحية", "زينب", "سناء", "شيماء", "إلهام", "ريم", "لاميا", "أماني", "زينب", "ريهام", "يسرى", "سليمة", "نسبة", "فردوس", "جميلة", "منى", "شيرين", "جهان", "حليمة", "سليمة", "لويزا", "سورايه", "ميساء", "نبيلة", "نissa", "أميرة", "إيمان", "مالكة", "ريم", "مديحة", "خولة", "فرح", "إيناس", "نادية", "ندى", "هالة", "فتين", "ياسمين", "صوفيا", "نعيمة", "رانيا", "جنة", "لميا", "زهرة", "لينا", "سناء", "هند", "أحلام", "وفاء", "هانية", "مونية", "خولاء", "فضيلة", "هالة", "سومية", "عائشة", "مريم", "هناء", "فريدة", "شيماء", "شادية", "زينة", "نجلى", "رحمة", "جود", "عائدة", "ياسمينة", "سامية", "يارا", "راندا"]
+            },
+            
+            Egypt: {
+                greetings: ["هلا", "إزيك", " ","مساء الفل", " ", "عامل إيه", " ","كيف حالك", " ", "يا هلا"],
+                names: ["يا مريم", "يا فاطمة", "يا سارة", "يا هالة", "يا ليلى", "يا ياسمين", "يا دينا", "يا ندى", "يا رنا", "يا سلمى", "يا ريهام", "يا زينب", "يا عائشة", "يا ميساء", "يا هبة", "يا رولا", "يا نجلاء", "يا جنى", "يا فريدة", "يا سعاد", "يا شيماء", "يا ميسون", "يا أسيل", "يا كنزة", "يا جود", "يا كريمة", "يا دعاء", "يا سمر", "يا رندا", "يا لمى", "يا جواهر", "يا حنان", "يا عزة", "يا بسمة", "يا نانسي", "يا يارا", "يا نوال", "يا جميلة", "يا عفاف", "يا آية", "يا نور", "يا سما", "يا سهى", "يا شيرين", "يا مي", "يا لمياء", "يا راما", "يا زهراء", "يا سوزان", "يا رقية", "يا مروة", "يا آمنة", "يا غادة", "يا ريتا", "يا سلوى", "يا أماني", "يا وفاء", "يا رفيعة", "يا كاميليا", "يا رانيا", "يا تسنيم", "يا غزل", "يا حلا", "يا مروى", "يا زين", "يا آلاء", "يا ملك", "يا جوليانا", "يا جوديث", "يا زينة", "يا نعيمة", "يا أفنان", "يا ميار", "يا نادية", "يا أروى", "يا غدير", "يا عناية", "يا لميس", "يا توتة", "يا ملكة", "يا درية", "يا إنجي", "يا نورا", "يا شذى", "يا ريناد", "يا سمية", "يا كمالة", "يا بدور", "يا نهى", "يا لارا", "يا تغريد", "يا بشرى", "يا إسراء", "يا ربا", "يا أفراح", "يا خديجة", "يا مديحة", "يا حليمة", "يا سناء", "يا سجى", "يا دلال", "يا ليا", "يا شريفة", "يا أبرار", "يا هنية", "يا سحر", "يا أريج", "يا حبيبة", "يا إيمان", "يا هناء", "يا سوسن", "يا هيام", "يا رحيق", "يا غزلان", "يا لطيفة", "يا جيلان", "يا مها", "يا فرح", "يا فائزة", "يا رنيم", "يا أسمهان", "يا جمانة", "يا ضحى", "يا هند", "يا عُلا", "يا جينا", "يا أحلام", "يا عزيزة", "يا سُرية", "يا بسمات", "يا شهيرة", "يا فوزية", "يا ياسمينة", "يا ميادة", "يا رئيفة", "يا عطر", "يا حسناء", "يا لوجين", "يا بيداء", "يا عفراء", "يا صفاء", "يا نسيم", "يا ساجدة", "يا جومانا", "يا حوراء", "يا شذا", "يا عشتار", "يا هادية", "يا لينا", "يا عارفة", "يا ريم", "يا جليلة", "يا أسيا", "يا ولاء", "يا أميرة", "يا فرحة", "يا رباب", "يا صوفيا", "يا رماح", "يا هيا", "يا جنان", "يا صفا", "يا عهود", "يا رلى", "يا قمر", "يا سيدة", "يا عايدة", "يا سماح", "يا سحاب", "يا فدوى", "يا صبريه", "يا بتول", "يا بيسان", "يا بسمه", "يا ليان", "يا ناهد", "يا نبيلة", "يا نادين", "يا سميرة", "يا مشاعل", "يا رائدة", "يا راوية", "يا عبير", "يا مرام", "يا رؤى", "يا نسيمة", "يا عفت", "يا هيفاء", "يا فايزة", "يا رنين", "يا سهاد", "يا مرجانه", "يا كنده", "يا سامية", "يا نهلة", "يا داليا", "يا يسرا", "يا رندة", "يا نسرين", "يا منى", "يا منار"]
+            },
+            Iran: {
+                greetings: ["سلام", " ","خوبی", " ","حالت چطوره"],
+                names: [" آذر", " آریانا", " آرزو", " آمنه", " آریا", " باران", " بامداد", " بهار", " بینا", " پریناز", " تارا", " تینا", " جانان", " ژینا", " سارا", " سمیرا", " شبنم", " شیدا", " شیرین", " عسل", " فاطمه", " نیلوفر", " نیکتا", " نگار", " هلیا", " یلدا", " آوینا", " آنیتا", " باربد", " بهراد", " تهمینه", " جمیله", " دنا", " رها", " زهره", " ساناز", " سانیا", " سحر", " سنا", " سمیه", " شیدخت", " شکیبا", " گلاره", " گلسا", " گلشن", " لیلا", " مریم", " مهتاب", " ندا", " نرگس", " نازنین", " نوشین", " هدیه", " یگانه", " یاسمن", " آذرخش", " ارمغان", " بیدا", " پگاه", " تندیس", " تینوش", " جواهر", " دینا", " رویا", " رونا", " رزمند", " زرین", " شایسته", " شمس", " ناهید", " نیکو", " نیکوکار", " نیایش", " هانیه", " بیتا", " تیانا", " چکاوک", " دخت", " رادین", " ساره", " شایلا", " طناز", " عطیه", " فرشته", " کتیبه", " گلناز", " مانی", " ماندانا", " مائده", " مهدیه", " مژگان", " مهسا", " نادیا", " نیکا", " هاله", " هیلدا", " یکتا", " یسنا", " آسو", " آیدا", " انسیه", " پریسا", " پرنیان", " آنا", " ارغوان", " روشنک", " سمیره", " سنایی", " شکیلا", " مونا", " مهشید", " گیتی", " زینب", " هورام", " سولماز", " سحرناز", " گلاب", " لیلی", " مروارید", " مهلا", " نغمه", " آبتین", " آویدا", " آفرین", " آشیانه", " افرینش", " الیسا", " افسانه", " بنفشه", " بهمَن", " تمنا", " ثریا", " جاوید", " جامه", " جواهری", " دلنیا", " دنیا", " رادیا", " راحله", " روشن", " زینت", " زیبا", " ساغر", " سحرخیز", " سهیلا", " سهراب", " شقایق", " شکوفه", " طوبی", " عذرا", " غزل", " فریبا", " فریده", " قمر", " کاتیا", " گلرخ", " گلی", " گلنوش", " گلابی", " لاله", " مژده", " مهیرا", " نکیسا", " هدی", " هینا", " آذین", " آوید", " آینه", " بادر", " بیداری", " بیدخت", " پرستو", " پویش", " تیرانا", " جوانه", " حنانه", " خطا", " دانیال", " دلنواز", " دوستی", " راضیه", " ساجده", " سروش", " شهلا", " صدف", " طلا", " عاطفه", " غنچه", " فیروزه", " قدس", " کمال", " کاوه", " میترا", " مهناز", " نیما", " آروین", " آتوسا", " آوا", " الی", " افشین", " پارسا", " پردیس", " پرناز", " تقی", " جانا", " جهان", " دوشیزه", " رستا", " رنا", " روناک", " عایشه", " فرناز", " کیانا", " آرا", " پروانه", " رینا", " شیما", " غزاله", " نیوشا", " هیدا", " آویشن", " بهاره", " حانیه", " سوسن", " گلرنگ", " گلرنگی", " مهری", " مهدیس", " آیلین", " تابناک", " خوشا", " هورا", " پرچم", " پریا", " ریزه", " گلزار", " مینا"]
+
+            },
+
+            India: {
+                greetings: ["سلام", " ","خوبی", " ","حالت7طوره"],
+                names: [" آ7ر", " آریانا", " آرزو", " آمنه", " آریا", " باران", " بامداد", " بهار", " بینا", " پریناز", " تارا", " تینا", " جانان", " ژینا", " سارا", " سمیرا", " شبنم", " شیدا", " شیرین", " عسل", " فاطمه", " نیلوفر", " نیکتا", " نگار", " هلیا", " یلدا", " آوینا", " آنیتا", " باربد", " بهراد", " تهمینه", " جمیله", " دنا", " رها", " زهره", " ساناز", " سانیا", " سحر", " سنا", " سمیه", " شیدخت", " شکیبا", " گلاره", " گلسا", " گلشن", " لیلا", " مریم", " مهتاب", " ندا", " نرگس", " نازنین", " نوشین", " هدیه", " یگانه", " یاسمن", " آذرخش", " ارمغان", " بیدا", " پگاه", " تندیس", " تینوش", " جواهر", " دینا", " رویا", " رونا", " رزمند", " زرین", " شایسته", " شمس", " ناهید", " نیکو", " نیکوکار", " نیایش", " هانیه", " بیتا", " تیانا", " چکاوک", " دخت", " رادین", " ساره", " شایلا", " طناز", " عطیه", " فرشته", " کتیبه", " گلناز", " مانی", " ماندانا", " مائده", " مهدیه", " مژگان", " مهسا", " نادیا", " نیکا", " هاله", " هیلدا", " یکتا", " یسنا", " آسو", " آیدا", " انسیه", " پریسا", " پرنیان", " آنا", " ارغوان", " روشنک", " سمیره", " سنایی", " شکیلا", " مونا", " مهشید", " گیتی", " زینب", " هورام", " سولماز", " سحرناز", " گلاب", " لیلی", " مروارید", " مهلا", " نغمه", " آبتین", " آویدا", " آفرین", " آشیانه", " افرینش", " الیسا", " افسانه", " بنفشه", " بهمَن", " تمنا", " ثریا", " جاوید", " جامه", " جواهری", " دلنیا", " دنیا", " رادیا", " راحله", " روشن", " زینت", " زیبا", " ساغر", " سحرخیز", " سهیلا", " سهراب", " شقایق", " شکوفه", " طوبی", " عذرا", " غزل", " فریبا", " فریده", " قمر", " کاتیا", " گلرخ", " گلی", " گلنوش", " گلابی", " لاله", " مژده", " مهیرا", " نکیسا", " هدی", " هینا", " آذین", " آوید", " آینه", " بادر", " بیداری", " بیدخت", " پرستو", " پویش", " تیرانا", " جوانه", " حنانه", " خطا", " دانیال", " دلنواز", " دوستی", " راضیه", " ساجده", " سروش", " شهلا", " صدف", " طلا", " عاطفه", " غنچه", " فیروزه", " قدس", " کمال", " کاوه", " میترا", " مهناز", " نیما", " آروین", " آتوسا", " آوا", " الی", " افشین", " پارسا", " پردیس", " پرناز", " تقی", " جانا", " جهان", " دوشیزه", " رستا", " رنا", " روناک", " عایشه", " فرناز", " کیانا", " آرا", " پروانه", " رینا", " شیما", " غزاله", " نیوشا", " هیدا", " آویشن", " بهاره", " حانیه", " سوسن", " گلرنگ", " گلرنگی", " مهری", " مهدیس", " آیلین", " تابناک", " خوشا", " هورا", " پرچم", " پریا", " ریزه", " گلزار", " مینا"]
+
+            },
+            France: {
+                greetings: ["سلام", " ","خوبی", " ","حالت چطوره"],
+                names: [" آذر", " آریانا", " آرزو", " آمنه", " آریا", " باران", " بامداد", " بهار", " بینا", " پریناز", " تارا", " تینا", " جانان", " ژینا", " سارا", " سمیرا", " شبنم", " شیدا", " شیرین", " عسل", " فاطمه", " نیلوفر", " نیکتا", " نگار", " هلیا", " یلدا", " آوینا", " آنیتا", " باربد", " بهراد", " تهمینه", " جمیله", " دنا", " رها", " زهره", " ساناز", " سانیا", " سحر", " سنا", " سمیه", " شیدخت", " شکیبا", " گلاره", " گلسا", " گلشن", " لیلا", " مریم", " مهتاب", " ندا", " نرگس", " نازنین", " نوشین", " هدیه", " یگانه", " یاسمن", " آذرخش", " ارمغان", " بیدا", " پگاه", " تندیس", " تینوش", " جواهر", " دینا", " رویا", " رونا", " رزمند", " زرین", " شایسته", " شمس", " ناهید", " نیکو", " نیکوکار", " نیایش", " هانیه", " بیتا", " تیانا", " چکاوک", " دخت", " رادین", " ساره", " شایلا", " طناز", " عطیه", " فرشته", " کتیبه", " گلناز", " مانی", " ماندانا", " مائده", " مهدیه", " مژگان", " مهسا", " نادیا", " نیکا", " هاله", " هیلدا", " یکتا", " یسنا", " آسو", " آیدا", " انسیه", " پریسا", " پرنیان", " آنا", " ارغوان", " روشنک", " سمیره", " سنایی", " شکیلا", " مونا", " مهشید", " گیتی", " زینب", " هورام", " سولماز", " سحرناز", " گلاب", " لیلی", " مروارید", " مهلا", " نغمه", " آبتین", " آویدا", " آفرین", " آشیانه", " افرینش", " الیسا", " افسانه", " بنفشه", " بهمَن", " تمنا", " ثریا", " جاوید", " جامه", " جواهری", " دلنیا", " دنیا", " رادیا", " راحله", " روشن", " زینت", " زیبا", " ساغر", " سحرخیز", " سهیلا", " سهراب", " شقایق", " شکوفه", " طوبی", " عذرا", " غزل", " فریبا", " فریده", " قمر", " کاتیا", " گلرخ", " گلی", " گلنوش", " گلابی", " لاله", " مژده", " مهیرا", " نکیسا", " هدی", " هینا", " آذین", " آوید", " آینه", " بادر", " بیداری", " بیدخت", " پرستو", " پویش", " تیرانا", " جوانه", " حنانه", " خطا", " دانیال", " دلنواز", " دوستی", " راضیه", " ساجده", " سروش", " شهلا", " صدف", " طلا", " عاطفه", " غنچه", " فیروزه", " قدس", " کمال", " کاوه", " میترا", " مهناز", " نیما", " آروین", " آتوسا", " آوا", " الی", " افشین", " پارسا", " پردیس", " پرناز", " تقی", " جانا", " جهان", " دوشیزه", " رستا", " رنا", " روناک", " عایشه", " فرناز", " کیانا", " آرا", " پروانه", " رینا", " شیما", " غزاله", " نیوشا", " هیدا", " آویشن", " بهاره", " حانیه", " سوسن", " گلرنگ", " گلرنگی", " مهری", " مهدیس", " آیلین", " تابناک", " خوشا", " هورا", " پرچم", " پریا", " ریزه", " گلزار", " مینا"]
+
+            },
+            English: {
+                greetings: ["سلام", " ","خوبی", " ","حالت چطوره"],
+                names: [" آذر", " آریانا", " آرزو", " آمنه", " آریا", " باران", " بامداد", " بهار", " بینا", " پریناز", " تارا", " تینا", " جانان", " ژینا", " سارا", " سمیرا", " شبنم", " شیدا", " شیرین", " عسل", " فاطمه", " نیلوفر", " نیکتا", " نگار", " هلیا", " یلدا", " آوینا", " آنیتا", " باربد", " بهراد", " تهمینه", " جمیله", " دنا", " رها", " زهره", " ساناز", " سانیا", " سحر", " سنا", " سمیه", " شیدخت", " شکیبا", " گلاره", " گلسا", " گلشن", " لیلا", " مریم", " مهتاب", " ندا", " نرگس", " نازنین", " نوشین", " هدیه", " یگانه", " یاسمن", " آذرخش", " ارمغان", " بیدا", " پگاه", " تندیس", " تینوش", " جواهر", " دینا", " رویا", " رونا", " رزمند", " زرین", " شایسته", " شمس", " ناهید", " نیکو", " نیکوکار", " نیایش", " هانیه", " بیتا", " تیانا", " چکاوک", " دخت", " رادین", " ساره", " شایلا", " طناز", " عطیه", " فرشته", " کتیبه", " گلناز", " مانی", " ماندانا", " مائده", " مهدیه", " مژگان", " مهسا", " نادیا", " نیکا", " هاله", " هیلدا", " یکتا", " یسنا", " آسو", " آیدا", " انسیه", " پریسا", " پرنیان", " آنا", " ارغوان", " روشنک", " سمیره", " سنایی", " شکیلا", " مونا", " مهشید", " گیتی", " زینب", " هورام", " سولماز", " سحرناز", " گلاب", " لیلی", " مروارید", " مهلا", " نغمه", " آبتین", " آویدا", " آفرین", " آشیانه", " افرینش", " الیسا", " افسانه", " بنفشه", " بهمَن", " تمنا", " ثریا", " جاوید", " جامه", " جواهری", " دلنیا", " دنیا", " رادیا", " راحله", " روشن", " زینت", " زیبا", " ساغر", " سحرخیز", " سهیلا", " سهراب", " شقایق", " شکوفه", " طوبی", " عذرا", " غزل", " فریبا", " فریده", " قمر", " کاتیا", " گلرخ", " گلی", " گلنوش", " گلابی", " لاله", " مژده", " مهیرا", " نکیسا", " هدی", " هینا", " آذین", " آوید", " آینه", " بادر", " بیداری", " بیدخت", " پرستو", " پویش", " تیرانا", " جوانه", " حنانه", " خطا", " دانیال", " دلنواز", " دوستی", " راضیه", " ساجده", " سروش", " شهلا", " صدف", " طلا", " عاطفه", " غنچه", " فیروزه", " قدس", " کمال", " کاوه", " میترا", " مهناز", " نیما", " آروین", " آتوسا", " آوا", " الی", " افشین", " پارسا", " پردیس", " پرناز", " تقی", " جانا", " جهان", " دوشیزه", " رستا", " رنا", " روناک", " عایشه", " فرناز", " کیانا", " آرا", " پروانه", " رینا", " شیما", " غزاله", " نیوشا", " هیدا", " آویشن", " بهاره", " حانیه", " سوسن", " گلرنگ", " گلرنگی", " مهری", " مهدیس", " آیلین", " تابناک", " خوشا", " هورا", " پرچم", " پریا", " ریزه", " گلزار", " مینا"]
+
+            },
+            Spanish: {
+                greetings: ["سلام", " ","خوبی", " ","حالت چطوره"],
+                names: [" آذر", " آریانا", " آرزو", " آمنه", " آریا", " باران", " بامداد", " بهار", " بینا", " پریناز", " تارا", " تینا", " جانان", " ژینا", " سارا", " سمیرا", " شبنم", " شیدا", " شیرین", " عسل", " فاطمه", " نیلوفر", " نیکتا", " نگار", " هلیا", " یلدا", " آوینا", " آنیتا", " باربد", " بهراد", " تهمینه", " جمیله", " دنا", " رها", " زهره", " ساناز", " سانیا", " سحر", " سنا", " سمیه", " شیدخت", " شکیبا", " گلاره", " گلسا", " گلشن", " لیلا", " مریم", " مهتاب", " ندا", " نرگس", " نازنین", " نوشین", " هدیه", " یگانه", " یاسمن", " آذرخش", " ارمغان", " بیدا", " پگاه", " تندیس", " تینوش", " جواهر", " دینا", " رویا", " رونا", " رزمند", " زرین", " شایسته", " شمس", " ناهید", " نیکو", " نیکوکار", " نیایش", " هانیه", " بیتا", " تیانا", " چکاوک", " دخت", " رادین", " ساره", " شایلا", " طناز", " عطیه", " فرشته", " کتیبه", " گلناز", " مانی", " ماندانا", " مائده", " مهدیه", " مژگان", " مهسا", " نادیا", " نیکا", " هاله", " هیلدا", " یکتا", " یسنا", " آسو", " آیدا", " انسیه", " پریسا", " پرنیان", " آنا", " ارغوان", " روشنک", " سمیره", " سنایی", " شکیلا", " مونا", " مهشید", " گیتی", " زینب", " هورام", " سولماز", " سحرناز", " گلاب", " لیلی", " مروارید", " مهلا", " نغمه", " آبتین", " آویدا", " آفرین", " آشیانه", " افرینش", " الیسا", " افسانه", " بنفشه", " بهمَن", " تمنا", " ثریا", " جاوید", " جامه", " جواهری", " دلنیا", " دنیا", " رادیا", " راحله", " روشن", " زینت", " زیبا", " ساغر", " سحرخیز", " سهیلا", " سهراب", " شقایق", " شکوفه", " طوبی", " عذرا", " غزل", " فریبا", " فریده", " قمر", " کاتیا", " گلرخ", " گلی", " گلنوش", " گلابی", " لاله", " مژده", " مهیرا", " نکیسا", " هدی", " هینا", " آذین", " آوید", " آینه", " بادر", " بیداری", " بیدخت", " پرستو", " پویش", " تیرانا", " جوانه", " حنانه", " خطا", " دانیال", " دلنواز", " دوستی", " راضیه", " ساجده", " سروش", " شهلا", " صدف", " طلا", " عاطفه", " غنچه", " فیروزه", " قدس", " کمال", " کاوه", " میترا", " مهناز", " نیما", " آروین", " آتوسا", " آوا", " الی", " افشین", " پارسا", " پردیس", " پرناز", " تقی", " جانا", " جهان", " دوشیزه", " رستا", " رنا", " روناک", " عایشه", " فرناز", " کیانا", " آرا", " پروانه", " رینا", " شیما", " غزاله", " نیوشا", " هیدا", " آویشن", " بهاره", " حانیه", " سوسن", " گلرنگ", " گلرنگی", " مهری", " مهدیس", " آیلین", " تابناک", " خوشا", " هورا", " پرچم", " پریا", " ریزه", " گلزار", " مینا"]
+
+            },
+            
+
+            };
+
+        function updateGreetingsAndNames() {
+            const selectedRegion = document.getElementById('regionSelect').value;
+            greetings = regionData[selectedRegion].greetings;
+            names = regionData[selectedRegion].names;
+            const messageTextarea = document.getElementById('message');
+                
+                let message = '';
+
+                
+                switch (selectedRegion) {
+                    case 'A':
+                        message = '  ';
+                        break;
+                    case 'Algeria':
+                        message = 'هادي هي الغناية اللي قلتلك عليها تاع المغني الفلسطيني\n https://www.youtube.com/watch?v=gQgis3fagPw';
+                        break;
+                    case 'Morocco':
+                        message = 'هادي هي الأغنية اللي قلت لك عليها ديال المغني الفلسطيني تبارك الله\n https://www.youtube.com/watch?v=gQgis3fagPw';
+                        break;
+                        case 'Tunisia':
+                        message = 'هذيكة هي الأغنية اللي قلتلك عليها نتاع المغني الفلسطيني\n https://www.youtube.com/watch?v=gQgis3fagPw';
+                        break;
+                        case 'Libya':
+                        message = 'هدي الغناية قلتلك عليها متاع المغني الفلسطيني\n https://www.youtube.com/watch?v=gQgis3fagPw';
+                        break;
+                    case 'gulf':
+                        message = 'مرحبا من دول الخليج!';
+                        break;
+                    case 'sham':
+                        message = 'تحية من دول الشام!';
+                        break;
+                    case 'maghreb':
+                        message = 'مرحبا من المغرب العربي!';
+                        break;
+                    case 'Egypt':
+                        message = 'أهلا وسهلا من مصر!';
+                        break;
+                    case 'Iran':
+                    message = 'سلام از ایران! این ویدیویی است که من و شما در ماشین گوش دادیم \n https://www.youtube.com/watch?v=gQgis3fagPw';
+
+                        break;
+                    case 'India':
+                        message = 'नमस्ते भारत से!';
+                        break;
+                    case 'France':
+                        message = 'Bonjour de France!';
+                        break;
+                    case 'English':
+                        message = 'Hello from English Europe!';
+                        break;
+                    case 'Spanish':
+                        message = 'Greetings from America!';
+                        break;
+                    default:
+                        message = '5522';
+                }
+
+                
+                messageTextarea.value = message;
+            }
+
+        function generateWhatsAppLinks() {
+    const message = document.getElementById('message').value.trim();
+    const numbersText = document.getElementById('numbers').value.trim();
+    const numbers = numbersText.split('\n');
+    links = [];
+    sentCount = 0; 
+    document.getElementById('outputTableBody').innerHTML = '';
+    document.getElementById('loading').style.display = 'block';
+
+    
+    if (!message) {
+        alert("يرجى إدخال رسالة قبل المتابعة.");
+        document.getElementById('loading').style.display = 'none';
+        return; 
+    }
+
+    
+    if (numbersText.trim() === '') {
+        alert("يرجى إدخال الأرقام قبل المتابعة.");
+        document.getElementById('loading').style.display = 'none';
+        return; 
+    }
+
+    numbers.forEach((number, index) => {
+    number = number.trim()
+                   .replace(/\s+/g, '').replace(/[+()\-]/g, '');
+            if (number) {
+                const greeting = greetings[index % greetings.length]; 
+            const name = names[index % names.length]; 
+          
+            const personalizedMessage = `${greeting} ${name} ${message} ${videoLinks[index % videoLinks.length]}`; 
+            const link = `https://wa.me/${number}?text=${encodeURIComponent(personalizedMessage)}`;
+            links.push({ number, link });
+
+                const row = document.createElement('tr');
+                row.id = `row-${index}`;
+
+                const numberCell = document.createElement('td');
+                numberCell.textContent = number;
+
+                const linkCell = document.createElement('td');
+                const linkAnchor = document.createElement('a');
+                linkAnchor.href = link;
+                linkAnchor.textContent = link;
+                linkAnchor.target = '_blank';
+                linkCell.appendChild(linkAnchor);
+
+                const actionCell = document.createElement('td');
+                const sendButton = document.createElement('button');
+                sendButton.textContent = 'Send';
+                sendButton.onclick = () => sendLink(index);
+                actionCell.appendChild(sendButton);
+
+                row.appendChild(numberCell);
+                row.appendChild(linkCell);
+                row.appendChild(actionCell);
+
+                document.getElementById('outputTableBody').appendChild(row);
+            }
+        });
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('nextLinkButton').style.display = 'block';
+
+        
+        document.getElementById('regionSelect').style.display = 'none';
+        document.getElementById('countMessage').textContent = `مجموع الأرقام المدخلة: ${numbers.length}, الرسائل مرسلة: ${sentCount}`;
+        document.getElementById('regionLabel').style.display = 'none';
+        document.getElementById('messageLabel').style.display = 'none';
+        document.getElementById('numbersLabel').style.display = 'none';
+
+        
+        document.getElementById('message').style.display = 'none';
+        document.getElementById('numbers').style.display = 'none';
+        
+        
+        const stepOneButton = document.querySelector('button[onclick="generateWhatsAppLinks()"]');
+        stepOneButton.style.display = 'none';
+
+        
+        saveData();
+    }
+
+
+        function sendLink(index) {
+            const { link } = links[index];
+            window.open(link, '_blank');
+            document.getElementById(`row-${index}`).classList.add('sent');
+            sentCount++;
+            sentLinks.push(link);
+            document.getElementById('countMessage').textContent = `مجموع الأرقام المدخلة: ${links.length}, الروابط المرسلة: ${sentCount}`;
+            saveSentLinks(sentLinks);
+            saveData(); 
+        }
+
+        
+        function saveData() {
+            const numbers = document.getElementById('numbers').value.trim().split('\n');
+            const message = document.getElementById('message').value.trim();
+            localStorage.setItem('savedNumbers', JSON.stringify(numbers));
+            localStorage.setItem('savedMessage', message);
+            localStorage.setItem('generatedLinks', JSON.stringify(links));
+            localStorage.setItem('sentLinks', JSON.stringify(sentLinks));
+            localStorage.setItem('currentLinkIndex', currentLinkIndex);
+        }
+
+        
+        function loadPreviousData() {
+            const savedNumbers = JSON.parse(localStorage.getItem('savedNumbers')) || [];
+            const savedMessage = localStorage.getItem('savedMessage') || '';
+            const savedLinks = JSON.parse(localStorage.getItem('generatedLinks')) || [];
+            const savedSentLinks = JSON.parse(localStorage.getItem('sentLinks')) || [];
+            const savedCurrentIndex = parseInt(localStorage.getItem('currentLinkIndex')) || 0;
+
+            
+            sentCount = savedSentLinks.length;
+            
+            if (savedLinks.length > 0) {
+        
+        document.getElementById('regionSelect').style.display = 'none';
+        
+        
+        document.getElementById('regionLabel').style.display = 'none';
+        document.getElementById('messageLabel').style.display = 'none';
+        document.getElementById('numbersLabel').style.display = 'none';
+    }
+
+            document.getElementById('message').value = savedMessage;
+            document.getElementById('numbers').value = savedNumbers.join('\n');
+            sentLinks = savedSentLinks;
+            currentLinkIndex = savedCurrentIndex;
+
+            
+            if (savedLinks.length > 0) {
+                links = savedLinks;
+                document.getElementById('outputTableBody').innerHTML = '';
+                savedLinks.forEach((linkInfo, index) => {
+                    const row = document.createElement('tr');
+                    row.id = `row-${index}`;
+
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = linkInfo.number;
+
+                    const linkCell = document.createElement('td');
+                    const linkAnchor = document.createElement('a');
+                    linkAnchor.href = linkInfo.link;
+                    linkAnchor.textContent = linkInfo.link;
+                    linkAnchor.target = '_blank';
+                    linkCell.appendChild(linkAnchor);
+
+                    const actionCell = document.createElement('td');
+                    const sendButton = document.createElement('button');
+                    sendButton.textContent = 'Send';
+                    sendButton.onclick = () => sendLink(index);
+                    actionCell.appendChild(sendButton);
+
+                    row.appendChild(numberCell);
+                    row.appendChild(linkCell);
+                    row.appendChild(actionCell);
+                    document.getElementById('outputTableBody').appendChild(row);
+
+                    
+                    if (sentLinks.includes(linkInfo.link)) {
+                        row.classList.add('sent'); 
+                    }
+                });
+
+                
+                document.getElementById('countMessage').textContent = `مجموع الأرقام المدخلة: ${savedNumbers.length}, الروابط المرسلة: ${sentCount}`;
+
+                currentLinkIndex = savedCurrentIndex;
+                if (currentLinkIndex < links.length) {
+                    document.getElementById('nextLinkButton').style.display = 'block';
+                }
+
+                
+                document.getElementById('message').style.display = 'none';
+                document.getElementById('numbers').style.display = 'none';
+                document.querySelector('button[onclick="generateWhatsAppLinks()"]').style.display = 'none';
+            }
+        }
+
+        function goToNextLink() {
+    if (currentLinkIndex < links.length) {
+        const { link } = links[currentLinkIndex];
+        window.open(link, '_blank');
+        const currentRow = document.getElementById(`row-${currentLinkIndex}`);
+        currentRow.classList.add('sent'); 
+        sentCount++;
+        sentLinks.push(link);
+        currentLinkIndex++;
+        document.getElementById('countMessage').textContent = `مجموع الأرقام المدخلة: ${links.length}, الروابط المرسلة: ${sentCount}`;
+        saveSentLinks(sentLinks);
+        saveData(); 
+
+    
+        if (currentLinkIndex >= links.length) {
+            alert("خلصت كل الارقام");
+            document.getElementById('nextLinkButton').style.display = 'none'; 
+            document.getElementById('clearStorageButton').style.display = 'block'; 
+        }
+    }
+}
+
+
+
+        function saveSentLinks(links) {
+            localStorage.setItem('sentLinks', JSON.stringify(links));
+        }
+
+        
+        function confirmClearStorage() {
+       
+        if (confirm("هل أنت متأكد أنك تريد حذف الأرقام؟ لا يمكن التراجع عن هذا الإجراء.")) {
+           
+            clearStorage();
+        } else {
+           
+            alert("تم إلغاء الحذف.");
+        }
+    }
+
+    function clearStorage() {
+    console.log("تم استدعاء دالة clearStorage");
+    const request = indexedDB.deleteDatabase('WhatsAppLinksDB');
+
+    request.onsuccess = function() {
+        alert("تم حذف جميع البيانات بنجاح.");
+        location.reload();
+    };
+
+    request.onerror = function() {
+        alert("حدث خطأ أثناء حذف قاعدة البيانات.");
+    };
+
+    request.onblocked = function() {
+        alert("تم حظر عملية الحذف، يرجى إغلاق جميع النوافذ المفتوحة.");
+    };
+    alert("تم حذف الأرقام بنجاح.");
+    location.reload(); 
+}
+
+
+        
+        window.onload = updateGreetingsAndNames;
+    </script>
+
+<script>
+    let db;
+    const request = indexedDB.open("WhatsAppLinksDB", 1);
+
+    request.onerror = function(event) {
+        console.error("Database error: " + event.target.errorCode);
+    };
+
+    request.onsuccess = function(event) {
+        db = event.target.result;
+        loadPreviousData(); 
+    };
+
+    request.onupgradeneeded = function(event) {
+        db = event.target.result;
+        const objectStore = db.createObjectStore("whatsappLinks", { keyPath: "id" });
+    };
+
+    function saveData() {
+        const numbers = document.getElementById('numbers').value.trim().split('\n');
+        const message = document.getElementById('message').value.trim();
+
+        const transaction = db.transaction(["whatsappLinks"], "readwrite");
+        const objectStore = transaction.objectStore("whatsappLinks");
+
+        objectStore.put({ id: "savedNumbers", numbers: numbers });
+        objectStore.put({ id: "savedMessage", message: message });
+        objectStore.put({ id: "generatedLinks", links: links });
+        objectStore.put({ id: "sentLinks", sentLinks: sentLinks });
+        objectStore.put({ id: "currentLinkIndex", currentLinkIndex: currentLinkIndex });
+
+        transaction.oncomplete = function() {
+            console.log("Data saved successfully.");
+        };
+
+        transaction.onerror = function(event) {
+            console.error("Error saving data: " + event.target.errorCode);
+        };
+    }
+
+    function loadPreviousData() {
+        const transaction = db.transaction(["whatsappLinks"], "readonly");
+        const objectStore = transaction.objectStore("whatsappLinks");
+        
+        // استرجاع البيانات
+        const request = objectStore.getAll();
+
+        request.onsuccess = function(event) {
+            const data = event.target.result;
+
+            const savedNumbersData = data.find(item => item.id === "savedNumbers");
+            const savedMessageData = data.find(item => item.id === "savedMessage");
+            const savedLinksData = data.find(item => item.id === "generatedLinks");
+            const savedSentLinksData = data.find(item => item.id === "sentLinks");
+            const savedCurrentIndexData = data.find(item => item.id === "currentLinkIndex");
+
+            sentCount = savedSentLinksData ? savedSentLinksData.sentLinks.length : 0;
+
+            if (savedLinksData && savedLinksData.links.length > 0) {
+                document.getElementById('regionSelect').style.display = 'none';
+                document.getElementById('regionLabel').style.display = 'none';
+                document.getElementById('messageLabel').style.display = 'none';
+                document.getElementById('numbersLabel').style.display = 'none';
+            }
+
+            document.getElementById('message').value = savedMessageData ? savedMessageData.message : '';
+            document.getElementById('numbers').value = savedNumbersData ? savedNumbersData.numbers.join('\n') : '';
+            sentLinks = savedSentLinksData ? savedSentLinksData.sentLinks : [];
+            currentLinkIndex = savedCurrentIndexData ? savedCurrentIndexData.currentLinkIndex : 0;
+
+            if (savedLinksData && savedLinksData.links.length > 0) {
+                links = savedLinksData.links;
+                document.getElementById('outputTableBody').innerHTML = '';
+                savedLinksData.links.forEach((linkInfo, index) => {
+                    const row = document.createElement('tr');
+                    row.id = `row-${index}`;
+
+                    const numberCell = document.createElement('td');
+                    numberCell.textContent = linkInfo.number;
+
+                    const linkCell = document.createElement('td');
+                    const linkAnchor = document.createElement('a');
+                    linkAnchor.href = linkInfo.link;
+                    linkAnchor.textContent = linkInfo.link;
+                    linkAnchor.target = '_blank';
+                    linkCell.appendChild(linkAnchor);
+
+                    const actionCell = document.createElement('td');
+                    const sendButton = document.createElement('button');
+                    sendButton.textContent = 'Send';
+                    sendButton.onclick = () => sendLink(index);
+                    actionCell.appendChild(sendButton);
+
+                    row.appendChild(numberCell);
+                    row.appendChild(linkCell);
+                    row.appendChild(actionCell);
+                    document.getElementById('outputTableBody').appendChild(row);
+
+                    if (sentLinks.includes(linkInfo.link)) {
+                        row.classList.add('sent'); 
+                    }
+                });
+
+                document.getElementById('countMessage').textContent = `مجموع الأرقام المدخلة: ${savedNumbersData ? savedNumbersData.numbers.length : 0}, الروابط المرسلة: ${sentCount}`;
+
+                currentLinkIndex = savedCurrentIndexData ? savedCurrentIndexData.currentLinkIndex : 0;
+                if (currentLinkIndex < links.length) {
+                    document.getElementById('nextLinkButton').style.display = 'block';
+                }
+
+                document.getElementById('message').style.display = 'none';
+                document.getElementById('numbers').style.display = 'none';
+                document.querySelector('button[onclick="generateWhatsAppLinks()"]').style.display = 'none';
+            }
+        };
+
+        request.onerror = function(event) {
+            console.error("Error loading data: " + event.target.errorCode);
+        };
+    }
+
+    function saveSentLinks(sentLinks) {
+        const transaction = db.transaction(["whatsappLinks"], "readwrite");
+        const objectStore = transaction.objectStore("whatsappLinks");
+        objectStore.put({ id: "sentLinks", sentLinks: sentLinks });
+
+        transaction.oncomplete = function() {
+            console.log("Sent links updated successfully.");
+        };
+
+        transaction.onerror = function(event) {
+            console.error("Error saving sent links: " + event.target.errorCode);
+        };
+    }
+</script>
+</body>
+</html>

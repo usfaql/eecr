@@ -1,0 +1,242 @@
+.container-vehicle-one{
+    height: 94vh;
+    max-height: 94vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2%;
+    background-color: #ffffff;
+    color: #232C33;
+    cursor: default;
+}
+
+.bar-info{
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    height: 10%;
+    margin-top: 1%;
+    align-items: center;
+    border-radius: 8px;
+}
+.name-car{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.container-info{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    max-height: 85%;
+    gap: 2%;
+}
+
+.container-car-info{
+    display: flex;
+    gap: 2%;
+    flex-direction: column;
+    width: 60%;
+    height: 100%;
+    
+}
+
+.info{
+    height: 25%;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 2%;
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.082);
+}
+.invoice{
+  background-color: #ffffff;
+  height: 35%;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  text-align: start;
+  box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.082);
+}
+.order-list{
+    background-color: #ffffff;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    height: 35%;
+    max-height: 60%;
+    box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.082);
+    overflow-y: auto;
+
+}
+
+.order-list-in{
+  margin-bottom: 5px;
+  margin-top:5px; 
+  background-color:#fcfcfc;
+  padding:10px; 
+  border-radius:6px;
+  user-select: none;
+}
+.order-list-in:hover{
+  margin-bottom: 5px;
+  margin-top:5px; 
+  background-color:#eeeeee;
+  padding:10px; 
+  border-radius:6px;
+}
+
+.order-list-in:active{
+  background-color:#eeeeee;
+  transform: scale(0.995);
+}
+.image-car {
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.082);
+    border-radius: 8px;
+    width: 65%;
+}
+
+.repair-order-form {
+    font-family: Arial, sans-serif;
+    width: 800px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: #fff;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+  }
+  
+  .company-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .company-logo {
+    width: 80px;
+    margin-right: 10px;
+  }
+  
+  .company-info h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .company-info p {
+    margin: 2px 0;
+  }
+  
+  .order-info {
+    text-align: right;
+  }
+  
+  .customer-info table,
+  .work-details table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+  }
+  
+  .customer-info td,
+  .work-details td,
+  .work-details th {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: right;
+  }
+  
+  .work-details th {
+    background-color: #f0f0f0;
+  }
+  
+  .damage-notes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .damage-notes .notes {
+    flex: 1;
+    margin-left: 20px;
+  }
+  
+  textarea {
+    width: 100%;
+  }
+  
+  .agreement p {
+    margin: 20px 0;
+  }
+  
+  .signatures {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  input[type="text"] {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 150px;
+  }
+  td{
+    background-color: #f1f1f1;
+    text-align: start;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+  }
+
+  .btn-car{
+    border: 0;
+    padding: 5px 10px;
+    background-color: #bc0000;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    
+  }
+
+  .btn-car:active{
+    background-color: #a30000;
+    transform: scale(0.97);
+  }
+
+  .btn-car-paid{
+    border: 0;
+    padding: 5px 10px;
+    background-color: #10bc00;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    
+  }
+
+  .btn-car-paid:active{
+    background-color: #34a300;
+    transform: scale(0.97);
+  }
+  .btn-delete{
+    border: 0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: transparent;
+  }
+
+  .header-table > td {
+    text-align: start;
+    background-color: #dadada !important;
+    border-right: 1px solid #f1f1f1;
+    border-bottom: 1px solid #f1f1f1;
+  }

@@ -1,0 +1,17 @@
+.navbars{
+    height: 6vh;
+    width: 100vw ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: start;
+    background-color: #ececec;
+    padding: 0 !important;
+
+}
+.title{
+    width: fit-content;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
